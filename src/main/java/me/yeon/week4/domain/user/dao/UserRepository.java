@@ -39,7 +39,7 @@ public class UserRepository {
       rs = pstmt.getGeneratedKeys();
 
       if (rs.next()) {
-        return rs.getLong("user_id");
+        return rs.getLong(1);
       }
       throw new IllegalStateException("객체가 올바르게 생성되지 않았습니다.");
     } catch (SQLException e) {

@@ -12,8 +12,10 @@ import javax.sql.DataSource;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.yeon.week4.domain.user.domain.User;
+import org.springframework.stereotype.Repository;
 
 @Slf4j
+@Repository
 @RequiredArgsConstructor
 public class UserRepository {
 
@@ -37,7 +39,7 @@ public class UserRepository {
       rs = pstmt.getGeneratedKeys();
 
       if (rs.next()) {
-        return rs.getLong(1);
+        return rs.getLong("user_id");
       }
       throw new IllegalStateException("객체가 올바르게 생성되지 않았습니다.");
     } catch (SQLException e) {

@@ -3,10 +3,8 @@ package me.yeon.week4.domain.user.domain;
 import java.time.LocalDateTime;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 
 @Getter
-@Setter
 @RequiredArgsConstructor
 public class User {
 

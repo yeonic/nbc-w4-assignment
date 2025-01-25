@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.yeon.week4.domain.user.dao.UserRepository;
 import me.yeon.week4.domain.user.domain.User;
+import me.yeon.week4.domain.user.domain.UserMapper;
 import me.yeon.week4.domain.user.dto.AddUserRequest;
 import me.yeon.week4.domain.user.dto.AddUserResponse;
 import org.springframework.http.HttpStatus;
@@ -29,6 +30,8 @@ public class UserController {
   public AddUserResponse addUser(@RequestBody AddUserRequest req) throws SQLException {
     User userAdded = new User(req.getName(), req.getEmail());
     Long id = repository.save(userAdded);
-    return new AddUserResponse(id, userAdded.getEmail(), userAdded.getName());
+    userAdded.setGeneratedId(id);
+
+    return UserMapper.toAddResponse(userAdded);
   }
 }

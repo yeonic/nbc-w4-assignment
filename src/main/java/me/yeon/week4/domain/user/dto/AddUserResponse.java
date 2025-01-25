@@ -1,13 +1,13 @@
 package me.yeon.week4.domain.user.dto;
 
-import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 
 @Getter
-@AllArgsConstructor
+@Builder(builderMethodName = "create")
 public class AddUserResponse {
 
   private long id;
-  private String email;
   private String name;
+  private String email;
 }

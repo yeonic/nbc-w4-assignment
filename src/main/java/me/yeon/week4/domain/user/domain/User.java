@@ -10,9 +10,13 @@ import lombok.RequiredArgsConstructor;
 @AllArgsConstructor
 public class User {
 
-  private long userId;
+  private Long userId;
   private final String name;
   private final String email;
   private LocalDateTime createdAt;
   private LocalDateTime updatedAt;
+
+  public void setGeneratedId(Long generatedId) {
+    userId = generatedId;
+  }
 }

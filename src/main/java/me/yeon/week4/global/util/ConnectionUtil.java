@@ -18,4 +18,12 @@ public class ConnectionUtil {
     JdbcUtils.closeStatement(stmt);
     JdbcUtils.closeConnection(con);
   }
+
+  public static void close(Connection con, ResultSet rs, Statement... stmts) {
+    JdbcUtils.closeResultSet(rs);
+    for (Statement stmt : stmts) {
+      JdbcUtils.closeStatement(stmt);
+    }
+    JdbcUtils.closeConnection(con);
+  }
 }

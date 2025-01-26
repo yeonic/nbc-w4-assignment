@@ -15,6 +15,8 @@ import javax.sql.DataSource;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.yeon.week4.domain.schedule.domain.Schedule;
+import me.yeon.week4.domain.user.domain.User;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Repository;
 
 @Slf4j
@@ -23,6 +25,7 @@ import org.springframework.stereotype.Repository;
 public class ScheduleRepository {
 
   private final DataSource dataSource;
+  private final PasswordEncoder passwordEncoder;
 
   public Long save(Long user_id, String todo, String password) throws SQLException {
     String sql = "insert into schedule(user_id, todo, password) values (?, ?, ?)";
@@ -36,7 +39,7 @@ public class ScheduleRepository {
       pstmt = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
       pstmt.setLong(1, user_id);
       pstmt.setString(2, todo);
-      pstmt.setString(3, password);
+      pstmt.setString(3, passwordEncoder.encode(password));
       pstmt.executeUpdate();
 
       rs = pstmt.getGeneratedKeys();
@@ -70,7 +73,8 @@ public class ScheduleRepository {
             rs.getLong("schedule_id"),
             rs.getLong("user_id"),
             rs.getString("todo"),
-            rs.getString("password")
+            rs.getTimestamp("created_at").toLocalDateTime(),
+            rs.getTimestamp("updated_at").toLocalDateTime()
         );
       }
       // TODO 메시지 공통 처리 필요
@@ -102,7 +106,8 @@ public class ScheduleRepository {
             rs.getLong("schedule_id"),
             rs.getLong("user_id"),
             rs.getString("todo"),
-            rs.getString("password")
+            rs.getTimestamp("created_at").toLocalDateTime(),
+            rs.getTimestamp("updated_at").toLocalDateTime()
         ));
       }
       return result;
@@ -113,4 +118,115 @@ public class ScheduleRepository {
       close(con, pstmt, rs);
     }
   }
+
+  public Schedule updateTodoContent(Long scheduleId, String todo) throws SQLException {
+    String updateQuery = "update schedule set todo = ? where schedule_id = ?";
+    String getQuery = "select * from schedule where schedule_id = ?";
+
+    Connection con = null;
+    PreparedStatement pstmt1 = null;
+    PreparedStatement pstmt2 = null;
+    ResultSet rs = null;
+
+    try {
+      con = getConnection(dataSource);
+      pstmt1 = con.prepareStatement(updateQuery);
+      pstmt1.setString(1, todo);
+      pstmt1.setLong(2, scheduleId);
+      pstmt1.executeUpdate();
+
+      pstmt2 = con.prepareStatement(getQuery);
+      pstmt2.setLong(1, scheduleId);
+      rs = pstmt2.executeQuery();
+
+      if (rs.next()) {
+        return new Schedule(
+            rs.getLong("schedule_id"),
+            rs.getLong("user_id"),
+            rs.getString("todo"),
+            rs.getTimestamp("created_at").toLocalDateTime(),
+            rs.getTimestamp("updated_at").toLocalDateTime()
+        );
+      }
+      // TODO 메시지 공통 처리 필요
+      throw new IllegalStateException("스케줄을 업데이트 하는데 문제가 생겼습니다.");
+    } catch (SQLException e) {
+      log.error("db error", e);
+      throw e;
+    } finally {
+      close(con, rs, pstmt1, pstmt2);
+    }
+  }
+
+  public User updateWriterName(Long writerId, String writerName) throws SQLException {
+    String updateQuery = "update user set name = ? where user_id = ?";
+    String getQuery = "select * from user where user_id = ?";
+
+    Connection con = null;
+    PreparedStatement pstmt1 = null;
+    PreparedStatement pstmt2 = null;
+    ResultSet rs = null;
+
+    try {
+      con = getConnection(dataSource);
+      pstmt1 = con.prepareStatement(updateQuery);
+      pstmt1.setString(1, writerName);
+      pstmt1.setLong(2, writerId);
+      pstmt1.executeUpdate();
+
+      pstmt2 = con.prepareStatement(getQuery);
+      pstmt2.setLong(1, writerId);
+      rs = pstmt2.executeQuery();
+
+      if (rs.next()) {
+        return new User(
+            rs.getLong("user_id"),
+            rs.getString("name"),
+            rs.getString("email"),
+            rs.getTimestamp("created_at").toLocalDateTime(),
+            rs.getTimestamp("updated_at").toLocalDateTime()
+        );
+      }
+      // TODO 메시지 공통 처리 필요
+      throw new IllegalStateException("작성자를 업데이트 하는데 문제가 생겼습니다.");
+    } catch (SQLException e) {
+      log.error("db error", e);
+      throw e;
+    } finally {
+      close(con, rs, pstmt1, pstmt2);
+    }
+  }
+
+  public void delete(Long schedule_id) throws SQLException {
+    String deleteQuery = "delete from schedule where schedule_id = ?";
+    String getQuery = "select * from schedule where schedule_id = ?";
+
+    Connection con = null;
+    PreparedStatement pstmt1 = null;
+    PreparedStatement pstmt2 = null;
+    ResultSet rs = null;
+
+    try {
+      con = getConnection(dataSource);
+      pstmt1 = con.prepareStatement(deleteQuery);
+      pstmt1.setLong(1, schedule_id);
+      pstmt1.executeUpdate();
+
+      pstmt2 = con.prepareStatement(getQuery);
+      pstmt2.setLong(1, schedule_id);
+      rs = pstmt2.executeQuery();
+
+      if (rs.next()) {
+        // Todo 에러 메시지 공통 처리
+        throw new IllegalStateException("스케줄 삭제가 정상적으로 이루어지지 않았습니다.");
+      }
+
+    } catch (SQLException e) {
+      log.error("db error", e);
+      throw e;
+    } finally {
+      close(con, rs, pstmt1, pstmt2);
+    }
+  }
+
 }

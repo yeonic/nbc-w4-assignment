@@ -1,6 +1,6 @@
 package me.yeon.week4.domain.schedule.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -10,11 +10,11 @@ import lombok.RequiredArgsConstructor;
 @AllArgsConstructor
 public class Schedule {
 
-  private long scheduleId;
+  private Long scheduleId;
 
-  private final long userId;
+  private final Long userId;
   private final String todo;
 
-  @JsonIgnore
-  private final String password;
+  private LocalDateTime createdAt;
+  private LocalDateTime updatedAt;
 }

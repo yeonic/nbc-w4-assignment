@@ -10,6 +10,7 @@ import me.yeon.week4.domain.schedule.dto.AddScheduleRequest;
 import me.yeon.week4.domain.schedule.dto.AddScheduleResponse;
 import me.yeon.week4.domain.schedule.dto.GetScheduleResponse;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class ScheduleController {
 
   private final ScheduleRepository repository;
+  private final PasswordEncoder passwordEncoder;
 
   @GetMapping
   public List<GetScheduleResponse> schedules() throws SQLException {
@@ -41,7 +43,9 @@ public class ScheduleController {
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
   public AddScheduleResponse addSchedule(@RequestBody AddScheduleRequest req) throws SQLException {
-    Long savedId = repository.save(req.getUserId(), req.getTodo(), req.getPassword());
+    String hashedPassword = passwordEncoder.encode(req.getPassword());
+    Long savedId = repository.save(req.getUserId(), req.getTodo(), hashedPassword);
+
     Schedule findSchedule = repository.findById(savedId);
     return ScheduleMapper.toAddResponseDto(findSchedule);
   }

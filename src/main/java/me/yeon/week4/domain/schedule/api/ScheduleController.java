@@ -80,9 +80,9 @@ public class ScheduleController {
   }
 
   @DeleteMapping("/{scheduleId}")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
   public void delete(@PathVariable Long scheduleId, @RequestBody DeleteScheduleRequest req)
       throws SQLException {
-
     repository.delete(scheduleId);
   }
 

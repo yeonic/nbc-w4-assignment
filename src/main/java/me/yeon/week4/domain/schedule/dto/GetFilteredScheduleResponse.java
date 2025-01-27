@@ -8,9 +8,14 @@ import lombok.Getter;
 @Getter
 @JsonInclude(Include.NON_NULL)
 @Builder(builderMethodName = "create")
-public class UpdateScheduleResponse {
+public class GetFilteredScheduleResponse {
 
-  private long schedule_id;
+  private long scheduleId;
+  private long userId;
   private String todo;
   private String username;
+
+  void putUsername(String username) {
+    this.username = username;
+  }
 }

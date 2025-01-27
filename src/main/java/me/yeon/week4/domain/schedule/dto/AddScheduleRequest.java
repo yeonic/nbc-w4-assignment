@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class AddScheduleRequest {
 
-  private Long userId;
+  private long userId;
   private String todo;
   private String password;
 }

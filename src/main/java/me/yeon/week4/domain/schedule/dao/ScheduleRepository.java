@@ -16,6 +16,7 @@ import javax.sql.DataSource;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.yeon.week4.domain.schedule.domain.Schedule;
+import me.yeon.week4.domain.schedule.domain.ScheduleWithUsername;
 import me.yeon.week4.domain.user.domain.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Repository;
@@ -88,15 +89,15 @@ public class ScheduleRepository {
     }
   }
 
-  public List<Schedule> findByOptions(Timestamp updatedAt, String writerName)
+  public List<ScheduleWithUsername> findByOptions(Timestamp updatedAt, String writerName)
       throws SQLException {
-    List<Schedule> result = new ArrayList<>();
+    List<ScheduleWithUsername> result = new ArrayList<>();
     List<Object> params = new ArrayList<>();
 
     StringBuilder sb = new StringBuilder();
     if (writerName != null) {
       sb.append(
-          "select s.* from schedule as s inner join user as u on s.user_id = u.user_id where u.name = ?");
+          "select s.*, u.name from schedule as s inner join user as u on s.user_id = u.user_id where u.name = ?");
       params.add(writerName);
     } else {
       sb.append("select * from schedule as s where 1=1");
@@ -122,9 +123,10 @@ public class ScheduleRepository {
       rs = pstmt.executeQuery();
 
       while (rs.next()) {
-        result.add(new Schedule(
+        result.add(new ScheduleWithUsername(
             rs.getLong("schedule_id"),
             rs.getLong("user_id"),
+            writerName != null ? rs.getString("name") : null,
             rs.getString("todo"),
             rs.getTimestamp("created_at").toLocalDateTime(),
             rs.getTimestamp("updated_at").toLocalDateTime()

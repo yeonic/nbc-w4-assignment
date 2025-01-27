@@ -1,6 +1,7 @@
 package me.yeon.week4.domain.schedule.api;
 
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -35,15 +37,24 @@ public class ScheduleController {
   private final ScheduleRepository repository;
 
   @GetMapping
-  public List<GetScheduleResponse> schedules() throws SQLException {
-    return repository.findAll()
+  public List<GetScheduleResponse> schedulesByOptions(
+      @RequestParam(value = "updatedAt", required = false) String updatedAt,
+      @RequestParam(value = "writerName", required = false) String writerName
+  )
+      throws SQLException {
+
+    Timestamp update_time = updatedAt != null ? Timestamp.valueOf(updatedAt + " 00:00:00") : null;
+
+    return repository.findByOptions(update_time, writerName)
         .stream()
         .map(ScheduleMapper::toGetResponseDto)
         .toList();
   }
 
   @GetMapping("/{scheduleId}")
-  public GetScheduleResponse schedule(@PathVariable long scheduleId) throws SQLException {
+  public GetScheduleResponse schedule(@PathVariable("scheduleId") long scheduleId)
+      throws SQLException {
+
     return ScheduleMapper.toGetResponseDto(repository.findById(scheduleId));
   }
 
@@ -58,9 +69,13 @@ public class ScheduleController {
 
   @PatchMapping("/{scheduleId}/update")
   public UpdateScheduleResponse update(
-      @PathVariable Long scheduleId,
+      @PathVariable("scheduleId") Long scheduleId,
       @RequestBody UpdateScheduleRequest req
   ) throws SQLException {
+
+    if (!isValidPassword(scheduleId, req.getPassword())) {
+      throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+    }
 
     UpdateScheduleResponseBuilder dtoBuilder = UpdateScheduleResponse.create()
         .schedule_id(scheduleId);
@@ -83,7 +98,16 @@ public class ScheduleController {
   @ResponseStatus(HttpStatus.NO_CONTENT)
   public void delete(@PathVariable Long scheduleId, @RequestBody DeleteScheduleRequest req)
       throws SQLException {
+
+    if (!isValidPassword(scheduleId, req.getPassword())) {
+      throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+    }
+
     repository.delete(scheduleId);
+  }
+
+  private boolean isValidPassword(Long scheduleId, String password) throws SQLException {
+    return repository.checkPassword(scheduleId, password);
   }
 
   private boolean hasField(String field) {

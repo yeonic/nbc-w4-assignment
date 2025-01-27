@@ -8,6 +8,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -87,10 +88,26 @@ public class ScheduleRepository {
     }
   }
 
-  public List<Schedule> findAll() throws SQLException {
+  public List<Schedule> findByOptions(Timestamp updatedAt, String writerName)
+      throws SQLException {
     List<Schedule> result = new ArrayList<>();
+    List<Object> params = new ArrayList<>();
 
-    String sql = "select * from schedule";
+    StringBuilder sb = new StringBuilder();
+    if (writerName != null) {
+      sb.append(
+          "select s.* from schedule as s inner join user as u on s.user_id = u.user_id where u.name = ?");
+      params.add(writerName);
+    } else {
+      sb.append("select * from schedule as s where 1=1");
+    }
+
+    if (updatedAt != null) {
+      sb.append(" and DATE(s.updated_at) = ?");
+      params.add(updatedAt);
+    }
+
+    sb.append(" order by s.updated_at desc");
 
     Connection con = null;
     PreparedStatement pstmt = null;
@@ -98,7 +115,10 @@ public class ScheduleRepository {
 
     try {
       con = getConnection(dataSource);
-      pstmt = con.prepareStatement(sql);
+      pstmt = con.prepareStatement(sb.toString());
+      for (int i = 0; i < params.size(); i++) {
+        pstmt.setObject(i + 1, params.get(i));
+      }
       rs = pstmt.executeQuery();
 
       while (rs.next()) {
@@ -194,6 +214,32 @@ public class ScheduleRepository {
       throw e;
     } finally {
       close(con, rs, pstmt1, pstmt2);
+    }
+  }
+
+  public boolean checkPassword(Long scheduleId, String password) throws SQLException {
+    String sql = "select password from schedule where schedule_id = ?";
+
+    Connection con = null;
+    PreparedStatement pstmt = null;
+    ResultSet rs = null;
+
+    try {
+      con = getConnection(dataSource);
+      pstmt = con.prepareStatement(sql);
+      pstmt.setLong(1, scheduleId);
+
+      rs = pstmt.executeQuery();
+      if (rs.next()) {
+        String hashedPassword = rs.getString(1);
+        return passwordEncoder.matches(password, hashedPassword);
+      }
+      throw new IllegalStateException("잘못된 접근입니다.");
+    } catch (SQLException e) {
+      log.error("db error", e);
+      throw e;
+    } finally {
+      close(con, pstmt, rs);
     }
   }
 

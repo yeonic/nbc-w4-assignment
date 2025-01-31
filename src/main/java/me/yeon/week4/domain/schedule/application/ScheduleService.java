@@ -18,6 +18,7 @@ import me.yeon.week4.domain.schedule.dto.UpdateScheduleResponse;
 import me.yeon.week4.domain.schedule.dto.UpdateScheduleResponse.UpdateScheduleResponseBuilder;
 import me.yeon.week4.domain.user.domain.User;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -57,6 +58,7 @@ public class ScheduleService {
     return ScheduleMapper.toAddResponseDto(findSchedule);
   }
 
+  @Transactional
   public UpdateScheduleResponse updateWithAuthorization(long scheduleId, UpdateScheduleRequest req)
       throws SQLException {
 
@@ -82,6 +84,7 @@ public class ScheduleService {
     return dtoBuilder.build();
   }
 
+  @Transactional
   public void deleteWithAuthorization(long scheduleId, DeleteScheduleRequest req)
       throws SQLException {
 

@@ -63,15 +63,12 @@ public class ScheduleRepository {
 
   public List<ScheduleWithUsername> findByOptions(Timestamp updatedAt, String writerName) {
     List<Object> params = new ArrayList<>();
-    StringBuilder sb = new StringBuilder();
+    StringBuilder sb = new StringBuilder(
+        "select s.*, u.name from schedule as s inner join user as u on s.user_id = u.user_id where 1=1");
 
-    // writerName을 기준으로 조회하려면 join문을 준비해야 함
     if (writerName != null) {
-      sb.append(
-          "select s.*, u.name from schedule as s inner join user as u on s.user_id = u.user_id where u.name = ?");
+      sb.append(" and u.name = ?");
       params.add(writerName);
-    } else {
-      sb.append("select * from schedule as s where 1=1");
     }
 
     if (updatedAt != null) {
@@ -85,7 +82,7 @@ public class ScheduleRepository {
     return template.query(sql, (rs, rowNum) -> new ScheduleWithUsername(
         rs.getLong("schedule_id"),
         rs.getLong("user_id"),
-        writerName != null ? rs.getString("name") : null,
+        rs.getString("name"),
         rs.getString("todo"),
         rs.getTimestamp("created_at").toLocalDateTime(),
         rs.getTimestamp("updated_at").toLocalDateTime()

@@ -1,5 +1,8 @@
 package me.yeon.week4.domain.user.dao;
 
+import static me.yeon.week4.global.util.ConnectionUtil.close;
+import static me.yeon.week4.global.util.ConnectionUtil.getConnection;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -9,9 +12,10 @@ import javax.sql.DataSource;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.yeon.week4.domain.user.domain.User;
-import org.springframework.jdbc.support.JdbcUtils;
+import org.springframework.stereotype.Repository;
 
 @Slf4j
+@Repository
 @RequiredArgsConstructor
 public class UserRepository {
 
@@ -25,7 +29,7 @@ public class UserRepository {
     ResultSet rs = null;
 
     try {
-      con = getConnection();
+      con = getConnection(dataSource);
       pstmt = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 
       pstmt.setString(1, author.getName());
@@ -46,13 +50,5 @@ public class UserRepository {
     }
   }
 
-  private Connection getConnection() throws SQLException {
-    return dataSource.getConnection();
-  }
 
-  private void close(Connection con, Statement stmt, ResultSet rs) {
-    JdbcUtils.closeResultSet(rs);
-    JdbcUtils.closeStatement(stmt);
-    JdbcUtils.closeConnection(con);
-  }
 }

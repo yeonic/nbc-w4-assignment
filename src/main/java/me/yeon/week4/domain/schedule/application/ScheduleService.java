@@ -16,6 +16,7 @@ import me.yeon.week4.domain.schedule.dto.UpdateScheduleRequest;
 import me.yeon.week4.domain.schedule.dto.UpdateScheduleResponse;
 import me.yeon.week4.domain.schedule.dto.UpdateScheduleResponse.UpdateScheduleResponseBuilder;
 import me.yeon.week4.domain.user.domain.User;
+import me.yeon.week4.global.common.Paging;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,8 +27,7 @@ public class ScheduleService {
   private final ScheduleRepository repository;
 
   public List<GetFilteredScheduleResponse> getFilteredSchedule(
-      String updatedAt,
-      String writerName
+      String updatedAt, String writerName, Paging pagingReq
   ) {
     Timestamp ts = null;
 
@@ -40,7 +40,9 @@ public class ScheduleService {
       ts = Timestamp.valueOf(updatedAt + " " + hhmmss);
     }
 
-    List<ScheduleWithUsername> filteredSchedule = repository.findByOptions(ts, writerName);
+    List<ScheduleWithUsername> filteredSchedule =
+        repository.findByOptions(ts, writerName, pagingReq);
+    
     return filteredSchedule
         .stream()
         .map(ScheduleMapper::toGetFilteredResponse)

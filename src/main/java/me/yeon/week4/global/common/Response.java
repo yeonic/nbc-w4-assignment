@@ -1,4 +1,4 @@
-package me.yeon.week4.global.dto;
+package me.yeon.week4.global.common;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

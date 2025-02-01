@@ -11,7 +11,8 @@ import me.yeon.week4.domain.schedule.dto.GetFilteredScheduleResponse;
 import me.yeon.week4.domain.schedule.dto.GetScheduleResponse;
 import me.yeon.week4.domain.schedule.dto.UpdateScheduleRequest;
 import me.yeon.week4.domain.schedule.dto.UpdateScheduleResponse;
-import me.yeon.week4.global.dto.Response;
+import me.yeon.week4.global.common.Paging;
+import me.yeon.week4.global.common.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -35,11 +36,14 @@ public class ScheduleController {
   @GetMapping
   public Response<List<GetFilteredScheduleResponse>> schedulesByOptions(
       @RequestParam(value = "updatedAt", required = false) String updatedAt,
-      @RequestParam(value = "writerName", required = false) String writerName
+      @RequestParam(value = "writerName", required = false) String writerName,
+      @RequestParam(value = "pageSize") int pageSize,
+      @RequestParam(value = "pageNum") int pageNum
   ) {
 
     // TODO : Validation
-    return new Response<>(service.getFilteredSchedule(updatedAt, writerName));
+    Paging pagingReq = new Paging(pageSize, pageNum);
+    return new Response<>(service.getFilteredSchedule(updatedAt, writerName, pagingReq));
   }
 
   @GetMapping("/{scheduleId}")

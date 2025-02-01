@@ -42,7 +42,7 @@ public class ScheduleService {
 
     List<ScheduleWithUsername> filteredSchedule =
         repository.findByOptions(ts, writerName, pagingReq);
-    
+
     return filteredSchedule
         .stream()
         .map(ScheduleMapper::toGetFilteredResponse)
@@ -66,7 +66,6 @@ public class ScheduleService {
       UpdateScheduleRequest req
   ) {
     if (isNotValidPassword(scheduleId, req.getPassword())) {
-      // TODO: 메시지 공통 처리
       throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
     }
 

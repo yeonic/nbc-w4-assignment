@@ -1,7 +1,6 @@
 package me.yeon.week4.domain.user.dao;
 
 import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Objects;
 import javax.sql.DataSource;
@@ -22,7 +21,7 @@ public class UserRepository {
     this.template = new JdbcTemplate(dataSource);
   }
 
-  public Long save(User author) throws SQLException {
+  public Long save(User author) {
     String sql = "insert into user(name, email) values (?, ?)";
 
     KeyHolder generatedKeyHolder = new GeneratedKeyHolder();

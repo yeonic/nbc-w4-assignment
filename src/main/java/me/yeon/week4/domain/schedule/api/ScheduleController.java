@@ -1,11 +1,9 @@
 package me.yeon.week4.domain.schedule.api;
 
-import java.sql.SQLException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.yeon.week4.domain.schedule.application.ScheduleService;
-import me.yeon.week4.domain.schedule.dao.ScheduleRepository;
 import me.yeon.week4.domain.schedule.dto.AddScheduleRequest;
 import me.yeon.week4.domain.schedule.dto.AddScheduleResponse;
 import me.yeon.week4.domain.schedule.dto.DeleteScheduleRequest;
@@ -13,6 +11,8 @@ import me.yeon.week4.domain.schedule.dto.GetFilteredScheduleResponse;
 import me.yeon.week4.domain.schedule.dto.GetScheduleResponse;
 import me.yeon.week4.domain.schedule.dto.UpdateScheduleRequest;
 import me.yeon.week4.domain.schedule.dto.UpdateScheduleResponse;
+import me.yeon.week4.global.common.Paging;
+import me.yeon.week4.global.common.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,40 +32,38 @@ import org.springframework.web.bind.annotation.RestController;
 public class ScheduleController {
 
   private final ScheduleService service;
-  private final ScheduleRepository repository;
 
   @GetMapping
-  public List<GetFilteredScheduleResponse> schedulesByOptions(
+  public Response<List<GetFilteredScheduleResponse>> schedulesByOptions(
       @RequestParam(value = "updatedAt", required = false) String updatedAt,
-      @RequestParam(value = "writerName", required = false) String writerName
-  )
-      throws SQLException {
+      @RequestParam(value = "writerName", required = false) String writerName,
+      @RequestParam(value = "pageSize") int pageSize,
+      @RequestParam(value = "pageNum") int pageNum
+  ) {
 
     // TODO : Validation
-
-    return service.getFilteredSchedule(updatedAt, writerName);
+    Paging pagingReq = new Paging(pageSize, pageNum);
+    return new Response<>(service.getFilteredSchedule(updatedAt, writerName, pagingReq));
   }
 
   @GetMapping("/{scheduleId}")
-  public GetScheduleResponse schedule(@PathVariable("scheduleId") long scheduleId)
-      throws SQLException {
-
-    return service.getScheduleById(scheduleId);
+  public Response<GetScheduleResponse> schedule(@PathVariable("scheduleId") long scheduleId) {
+    return new Response<>(service.getScheduleById(scheduleId));
   }
 
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
-  public AddScheduleResponse addSchedule(@RequestBody AddScheduleRequest req) throws SQLException {
-    return service.saveScheduleAndGetResult(req);
+  public Response<AddScheduleResponse> addSchedule(@RequestBody AddScheduleRequest req) {
+
+    return new Response<>(service.saveScheduleAndGetResult(req));
   }
 
   @PatchMapping("/{scheduleId}/update")
-  public UpdateScheduleResponse update(
+  public Response<UpdateScheduleResponse> update(
       @PathVariable("scheduleId") long scheduleId,
       @RequestBody UpdateScheduleRequest req
-  ) throws SQLException {
-    
-    return service.updateWithAuthorization(scheduleId, req);
+  ) {
+    return new Response<>(service.updateWithAuthorization(scheduleId, req));
   }
 
   @DeleteMapping("/{scheduleId}")
@@ -73,8 +71,7 @@ public class ScheduleController {
   public void delete(
       @PathVariable long scheduleId,
       @RequestBody DeleteScheduleRequest req
-  ) throws SQLException {
-
+  ) {
     service.deleteWithAuthorization(scheduleId, req);
   }
 

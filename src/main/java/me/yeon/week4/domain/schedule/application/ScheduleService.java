@@ -1,6 +1,5 @@
 package me.yeon.week4.domain.schedule.application;
 
-import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +16,7 @@ import me.yeon.week4.domain.schedule.dto.UpdateScheduleRequest;
 import me.yeon.week4.domain.schedule.dto.UpdateScheduleResponse;
 import me.yeon.week4.domain.schedule.dto.UpdateScheduleResponse.UpdateScheduleResponseBuilder;
 import me.yeon.week4.domain.user.domain.User;
+import me.yeon.week4.global.common.Paging;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,9 +26,9 @@ public class ScheduleService {
 
   private final ScheduleRepository repository;
 
-  public List<GetFilteredScheduleResponse> getFilteredSchedule(String updatedAt, String writerName)
-      throws SQLException {
-
+  public List<GetFilteredScheduleResponse> getFilteredSchedule(
+      String updatedAt, String writerName, Paging pagingReq
+  ) {
     Timestamp ts = null;
 
     /*
@@ -40,18 +40,20 @@ public class ScheduleService {
       ts = Timestamp.valueOf(updatedAt + " " + hhmmss);
     }
 
-    List<ScheduleWithUsername> filteredSchedule = repository.findByOptions(ts, writerName);
+    List<ScheduleWithUsername> filteredSchedule =
+        repository.findByOptions(ts, writerName, pagingReq);
+    
     return filteredSchedule
         .stream()
         .map(ScheduleMapper::toGetFilteredResponse)
         .toList();
   }
 
-  public GetScheduleResponse getScheduleById(long scheduleId) throws SQLException {
+  public GetScheduleResponse getScheduleById(long scheduleId) {
     return ScheduleMapper.toGetResponseDto(repository.findById(scheduleId));
   }
 
-  public AddScheduleResponse saveScheduleAndGetResult(AddScheduleRequest req) throws SQLException {
+  public AddScheduleResponse saveScheduleAndGetResult(AddScheduleRequest req) {
     Long savedId = repository.save(req.getUserId(), req.getTodo(), req.getPassword());
 
     Schedule findSchedule = repository.findById(savedId);
@@ -59,10 +61,11 @@ public class ScheduleService {
   }
 
   @Transactional
-  public UpdateScheduleResponse updateWithAuthorization(long scheduleId, UpdateScheduleRequest req)
-      throws SQLException {
-
-    if (!isValidPassword(scheduleId, req.getPassword())) {
+  public UpdateScheduleResponse updateWithAuthorization(
+      long scheduleId,
+      UpdateScheduleRequest req
+  ) {
+    if (isNotValidPassword(scheduleId, req.getPassword())) {
       // TODO: 메시지 공통 처리
       throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
     }
@@ -85,10 +88,8 @@ public class ScheduleService {
   }
 
   @Transactional
-  public void deleteWithAuthorization(long scheduleId, DeleteScheduleRequest req)
-      throws SQLException {
-
-    if (!isValidPassword(scheduleId, req.getPassword())) {
+  public void deleteWithAuthorization(long scheduleId, DeleteScheduleRequest req) {
+    if (isNotValidPassword(scheduleId, req.getPassword())) {
       throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
     }
 
@@ -99,7 +100,7 @@ public class ScheduleService {
     return field != null && !field.isEmpty();
   }
 
-  private boolean isValidPassword(Long scheduleId, String password) throws SQLException {
-    return repository.checkPassword(scheduleId, password);
+  private boolean isNotValidPassword(Long scheduleId, String password) {
+    return !repository.checkPassword(scheduleId, password);
   }
 }

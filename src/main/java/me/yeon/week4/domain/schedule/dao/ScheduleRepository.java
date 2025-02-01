@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import me.yeon.week4.domain.schedule.domain.Schedule;
 import me.yeon.week4.domain.schedule.domain.ScheduleWithUsername;
 import me.yeon.week4.domain.user.domain.User;
+import me.yeon.week4.global.common.Paging;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -61,7 +62,9 @@ public class ScheduleRepository {
 
   }
 
-  public List<ScheduleWithUsername> findByOptions(Timestamp updatedAt, String writerName) {
+  public List<ScheduleWithUsername> findByOptions(
+      Timestamp updatedAt, String writerName, Paging pagingReq
+  ) {
     List<Object> params = new ArrayList<>();
     StringBuilder sb = new StringBuilder(
         "select s.*, u.name from schedule as s inner join user as u on s.user_id = u.user_id where 1=1");
@@ -77,6 +80,10 @@ public class ScheduleRepository {
     }
 
     sb.append(" order by s.updated_at desc");
+
+    sb.append(" limit ? offset ?");
+    params.add(pagingReq.getPageSize());
+    params.add(pagingReq.getOffset());
 
     String sql = sb.toString();
     return template.query(sql, (rs, rowNum) -> new ScheduleWithUsername(
@@ -119,6 +126,14 @@ public class ScheduleRepository {
             rs.getTimestamp("created_at").toLocalDateTime(),
             rs.getTimestamp("updated_at").toLocalDateTime()
         ), writerId);
+  }
+
+  public int getTotalSchedule() {
+    String sql = "select count(1) from schedule";
+    return Objects.requireNonNull(
+        template.queryForObject(sql,
+            (rs, rowNum) -> rs.getInt(1))
+    );
   }
 
 

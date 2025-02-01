@@ -128,16 +128,10 @@ public class ScheduleRepository {
         ), writerId);
   }
 
-  public int getTotalSchedule() {
-    String sql = "select count(1) from schedule";
-    return Objects.requireNonNull(
-        template.queryForObject(sql,
-            (rs, rowNum) -> rs.getInt(1))
-    );
-  }
-
-
   public void delete(Long schedule_id) {
+    if (findById(schedule_id) == null) {
+      throw new IllegalStateException("삭제할 수 없습니다");
+    }
     String sql = "delete from schedule where schedule_id = ?";
     template.update(sql, schedule_id);
   }

@@ -13,6 +13,7 @@ public class User {
   private Long userId;
   private final String name;
   private final String email;
+
   private LocalDateTime createdAt;
   private LocalDateTime updatedAt;
 

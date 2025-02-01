@@ -1,6 +1,6 @@
 package me.yeon.week4.domain.user.api;
 
-import java.sql.SQLException;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.yeon.week4.domain.user.dao.UserRepository;
@@ -27,7 +27,7 @@ public class UserController {
   @PostMapping
   @ResponseBody
   @ResponseStatus(HttpStatus.CREATED)
-  public AddUserResponse addUser(@RequestBody AddUserRequest req) throws SQLException {
+  public AddUserResponse addUser(@RequestBody @Valid AddUserRequest req) {
     User userAdded = new User(req.getName(), req.getEmail());
     Long id = repository.save(userAdded);
     userAdded.setGeneratedId(id);

@@ -1,5 +1,6 @@
 package me.yeon.week4.domain.schedule.api;
 
+import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -53,7 +54,9 @@ public class ScheduleController {
 
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
-  public Response<AddScheduleResponse> addSchedule(@RequestBody AddScheduleRequest req) {
+  public Response<AddScheduleResponse> addSchedule(
+      @RequestBody @Valid AddScheduleRequest req
+  ) {
 
     return new Response<>(service.saveScheduleAndGetResult(req));
   }

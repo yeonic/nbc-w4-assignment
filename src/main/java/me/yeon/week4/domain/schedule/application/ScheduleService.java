@@ -3,6 +3,7 @@ package me.yeon.week4.domain.schedule.application;
 import java.sql.Timestamp;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import me.yeon.week4.domain.schedule.dao.ScheduleRepository;
 import me.yeon.week4.domain.schedule.domain.Schedule;
 import me.yeon.week4.domain.schedule.domain.ScheduleMapper;
@@ -20,6 +21,7 @@ import me.yeon.week4.global.common.Paging;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ScheduleService {
@@ -30,14 +32,8 @@ public class ScheduleService {
       String updatedAt, String writerName, Paging pagingReq
   ) {
     Timestamp ts = null;
-
-    /*
-      updatedAt의 형식은 yyyy-dd-mm으로 controller에서 검증함
-      Timestamp에 맞게 hh:mm:ss를 추가해 줌
-     */
     if (updatedAt != null) {
-      String hhmmss = "00:00:00";
-      ts = Timestamp.valueOf(updatedAt + " " + hhmmss);
+      ts = formatTimeStamp(updatedAt);
     }
 
     List<ScheduleWithUsername> filteredSchedule =
@@ -66,6 +62,7 @@ public class ScheduleService {
       UpdateScheduleRequest req
   ) {
     if (isNotValidPassword(scheduleId, req.getPassword())) {
+      log.info("[updateWithAuthorization] password not match of schedule={}", scheduleId);
       throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
     }
 
@@ -73,12 +70,16 @@ public class ScheduleService {
         .schedule_id(scheduleId);
 
     if (hasField(req.getUsername())) {
+      log.info("[updateWithAutorization] Request body contains username field.");
+
       Long userId = repository.findById(scheduleId).getUserId();
       User updatedUser = repository.updateWriterName(userId, req.getUsername());
       dtoBuilder.username(updatedUser.getName());
     }
 
     if (hasField(req.getTodo())) {
+      log.info("[updateWithAutorization] Request body contains todo field.");
+
       Schedule updatedSchedule = repository.updateTodoContent(scheduleId, req.getTodo());
       dtoBuilder.todo(updatedSchedule.getTodo());
     }
@@ -89,6 +90,7 @@ public class ScheduleService {
   @Transactional
   public void deleteWithAuthorization(long scheduleId, DeleteScheduleRequest req) {
     if (isNotValidPassword(scheduleId, req.getPassword())) {
+      log.info("[deleteWithAuthorization] password not match of schedule={}", scheduleId);
       throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
     }
 
@@ -101,5 +103,14 @@ public class ScheduleService {
 
   private boolean isNotValidPassword(Long scheduleId, String password) {
     return !repository.checkPassword(scheduleId, password);
+  }
+
+  /*
+   * updatedAt의 형식은 yyyy-dd-mm으로 controller에서 검증함
+   * Timestamp에 맞게 hh:mm:ss를 추가해 줌
+   */
+  private Timestamp formatTimeStamp(String updatedAt) {
+    String hhmmss = "00:00:00";
+    return Timestamp.valueOf(updatedAt + " " + hhmmss);
   }
 }

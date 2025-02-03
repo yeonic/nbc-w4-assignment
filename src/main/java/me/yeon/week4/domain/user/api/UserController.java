@@ -2,7 +2,6 @@ package me.yeon.week4.domain.user.api;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import me.yeon.week4.domain.user.dao.UserRepository;
 import me.yeon.week4.domain.user.domain.User;
 import me.yeon.week4.domain.user.domain.UserMapper;
@@ -16,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-@Slf4j
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/users")

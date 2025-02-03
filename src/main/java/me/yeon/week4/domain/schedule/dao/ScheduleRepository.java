@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import javax.sql.DataSource;
-import lombok.extern.slf4j.Slf4j;
 import me.yeon.week4.domain.schedule.domain.Schedule;
 import me.yeon.week4.domain.schedule.domain.ScheduleWithUsername;
 import me.yeon.week4.domain.user.domain.User;
@@ -19,7 +18,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-@Slf4j
 @Repository
 public class ScheduleRepository {
 
@@ -59,7 +57,6 @@ public class ScheduleRepository {
             rs.getTimestamp("updated_at").toLocalDateTime()
         ),
         scheduleId);
-
   }
 
   public List<ScheduleWithUsername> findByOptions(

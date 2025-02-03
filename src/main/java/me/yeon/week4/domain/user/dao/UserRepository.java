@@ -4,14 +4,12 @@ import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.util.Objects;
 import javax.sql.DataSource;
-import lombok.extern.slf4j.Slf4j;
 import me.yeon.week4.domain.user.domain.User;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
-@Slf4j
 @Repository
 public class UserRepository {
 

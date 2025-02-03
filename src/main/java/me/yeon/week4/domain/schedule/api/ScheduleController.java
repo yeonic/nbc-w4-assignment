@@ -3,7 +3,6 @@ package me.yeon.week4.domain.schedule.api;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import me.yeon.week4.domain.schedule.application.ScheduleService;
 import me.yeon.week4.domain.schedule.dto.AddScheduleRequest;
 import me.yeon.week4.domain.schedule.dto.AddScheduleResponse;
@@ -26,7 +25,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/schedules")
@@ -42,7 +40,6 @@ public class ScheduleController {
       @RequestParam(value = "pageNum") int pageNum
   ) {
 
-    // TODO : Validation
     Paging pagingReq = new Paging(pageSize, pageNum);
     return new Response<>(service.getFilteredSchedule(updatedAt, writerName, pagingReq));
   }

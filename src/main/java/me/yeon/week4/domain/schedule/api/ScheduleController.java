@@ -39,7 +39,6 @@ public class ScheduleController {
       @RequestParam(value = "pageSize") int pageSize,
       @RequestParam(value = "pageNum") int pageNum
   ) {
-
     Paging pagingReq = new Paging(pageSize, pageNum);
     return new Response<>(service.getFilteredSchedule(updatedAt, writerName, pagingReq));
   }
@@ -74,6 +73,4 @@ public class ScheduleController {
   ) {
     service.deleteWithAuthorization(scheduleId, req);
   }
-
-
 }

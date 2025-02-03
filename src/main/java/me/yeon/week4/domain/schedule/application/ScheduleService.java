@@ -33,6 +33,7 @@ public class ScheduleService {
   ) {
     Timestamp ts = null;
     if (updatedAt != null) {
+      validateDateFormat(updatedAt);
       ts = formatTimeStamp(updatedAt);
     }
 
@@ -113,4 +114,13 @@ public class ScheduleService {
     String hhmmss = "00:00:00";
     return Timestamp.valueOf(updatedAt + " " + hhmmss);
   }
+
+  private void validateDateFormat(String updatedAt) {
+    String dateFormat = "^\\d{4}-(0[1-9]|1[012])-(0[1-9]|[12]\\d|3[01])$";
+    if (updatedAt != null && !updatedAt.matches(dateFormat)) {
+      log.error("error in updatedAt={}", updatedAt);
+      throw new IllegalArgumentException("잘못된 날짜 형식입니다.");
+    }
+  }
+
 }

@@ -10,7 +10,7 @@ import lombok.Getter;
 @Builder(builderMethodName = "create")
 public class UpdateScheduleResponse {
 
-  private long schedule_id;
+  private Long schedule_id;
   private String todo;
   private String username;
 }

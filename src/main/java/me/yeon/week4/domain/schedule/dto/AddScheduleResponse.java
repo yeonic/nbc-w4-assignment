@@ -7,7 +7,7 @@ import lombok.Getter;
 @Builder(builderMethodName = "create")
 public class AddScheduleResponse {
 
-  private long scheduleId;
-  private long userId;
+  private Long scheduleId;
+  private Long userId;
   private String todo;
 }

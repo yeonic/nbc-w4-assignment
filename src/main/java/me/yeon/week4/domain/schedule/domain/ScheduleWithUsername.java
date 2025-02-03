@@ -10,8 +10,8 @@ import lombok.RequiredArgsConstructor;
 @AllArgsConstructor
 public class ScheduleWithUsername {
 
-  private long scheduleId;
-  private final long userId;
+  private Long scheduleId;
+  private final Long userId;
   private final String username;
   private final String todo;
 

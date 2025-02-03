@@ -10,9 +10,9 @@ import lombok.RequiredArgsConstructor;
 @AllArgsConstructor
 public class Schedule {
 
-  private long scheduleId;
+  private Long scheduleId;
 
-  private final long userId;
+  private final Long userId;
   private final String todo;
 
   private LocalDateTime createdAt;

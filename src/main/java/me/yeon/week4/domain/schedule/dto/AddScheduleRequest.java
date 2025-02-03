@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 public class AddScheduleRequest {
 
   @NotBlank
-  private long userId;
+  private Long userId;
 
   @NotBlank(message = "할일을 입력해주세요.")
   @Size(max = 200, message = "할일은 최대 200자까지 입력 가능힙니다.")

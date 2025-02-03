@@ -10,12 +10,9 @@ import lombok.Getter;
 @Builder(builderMethodName = "create")
 public class GetFilteredScheduleResponse {
 
-  private long scheduleId;
-  private long userId;
+  private Long scheduleId;
+  private Long userId;
   private String todo;
   private String username;
 
-  void putUsername(String username) {
-    this.username = username;
-  }
 }

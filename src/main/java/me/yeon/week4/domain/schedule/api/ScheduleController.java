@@ -45,7 +45,7 @@ public class ScheduleController {
   }
 
   @GetMapping("/{scheduleId}")
-  public Response<GetScheduleResponse> schedule(@PathVariable("scheduleId") long scheduleId) {
+  public Response<GetScheduleResponse> schedule(@PathVariable("scheduleId") Long scheduleId) {
     return new Response<>(service.getScheduleById(scheduleId));
   }
 
@@ -60,7 +60,7 @@ public class ScheduleController {
 
   @PatchMapping("/{scheduleId}/update")
   public Response<UpdateScheduleResponse> update(
-      @PathVariable("scheduleId") long scheduleId,
+      @PathVariable("scheduleId") Long scheduleId,
       @RequestBody UpdateScheduleRequest req
   ) {
     return new Response<>(service.updateWithAuthorization(scheduleId, req));
@@ -69,7 +69,7 @@ public class ScheduleController {
   @DeleteMapping("/{scheduleId}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
   public void delete(
-      @PathVariable long scheduleId,
+      @PathVariable Long scheduleId,
       @RequestBody DeleteScheduleRequest req
   ) {
     service.deleteWithAuthorization(scheduleId, req);

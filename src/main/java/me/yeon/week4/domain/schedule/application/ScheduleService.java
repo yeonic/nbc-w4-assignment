@@ -45,7 +45,7 @@ public class ScheduleService {
         .toList();
   }
 
-  public GetScheduleResponse getScheduleById(long scheduleId) {
+  public GetScheduleResponse getScheduleById(Long scheduleId) {
     return ScheduleMapper.toGetResponseDto(repository.findById(scheduleId));
   }
 
@@ -58,7 +58,7 @@ public class ScheduleService {
 
   @Transactional
   public UpdateScheduleResponse updateWithAuthorization(
-      long scheduleId,
+      Long scheduleId,
       UpdateScheduleRequest req
   ) {
     if (isNotValidPassword(scheduleId, req.getPassword())) {
@@ -88,7 +88,7 @@ public class ScheduleService {
   }
 
   @Transactional
-  public void deleteWithAuthorization(long scheduleId, DeleteScheduleRequest req) {
+  public void deleteWithAuthorization(Long scheduleId, DeleteScheduleRequest req) {
     if (isNotValidPassword(scheduleId, req.getPassword())) {
       log.info("[deleteWithAuthorization] password not match of schedule={}", scheduleId);
       throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");

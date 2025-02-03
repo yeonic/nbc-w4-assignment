@@ -16,7 +16,7 @@
 
 ### ERD
 
-<img src="https://github.com/yeonic/nbc-w4-assignment/blob/dev/resources/0_erd.png" width="30%" alt="erd">
+<img src="https://github.com/yeonic/nbc-w4-assignment/blob/dev/resources/0_erd.png" alt="erd">
 
 <br/>
 

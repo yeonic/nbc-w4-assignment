@@ -7,7 +7,7 @@ import lombok.Getter;
 
 @Getter
 @JsonInclude(Include.NON_NULL)
-@Builder(builderMethodName = "create")
+@Builder
 public class UpdateScheduleResponse {
 
   private Long schedule_id;

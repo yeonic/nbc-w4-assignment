@@ -66,7 +66,7 @@ public class ScheduleService {
       throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
     }
 
-    UpdateScheduleResponseBuilder dtoBuilder = UpdateScheduleResponse.create()
+    UpdateScheduleResponseBuilder dtoBuilder = UpdateScheduleResponse.builder()
         .schedule_id(scheduleId);
 
     if (hasField(req.getUsername())) {

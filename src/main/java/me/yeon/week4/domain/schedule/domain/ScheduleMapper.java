@@ -7,7 +7,7 @@ import me.yeon.week4.domain.schedule.dto.GetScheduleResponse;
 public class ScheduleMapper {
 
   public static GetScheduleResponse toGetResponseDto(Schedule schedule) {
-    return GetScheduleResponse.create()
+    return GetScheduleResponse.builder()
         .scheduleId(schedule.getScheduleId())
         .userId(schedule.getUserId())
         .todo(schedule.getTodo())
@@ -15,7 +15,7 @@ public class ScheduleMapper {
   }
 
   public static AddScheduleResponse toAddResponseDto(Schedule schedule) {
-    return AddScheduleResponse.create()
+    return AddScheduleResponse.builder()
         .scheduleId(schedule.getScheduleId())
         .userId(schedule.getUserId())
         .todo(schedule.getTodo())
@@ -23,7 +23,7 @@ public class ScheduleMapper {
   }
 
   public static GetFilteredScheduleResponse toGetFilteredResponse(ScheduleWithUsername schedule) {
-    return GetFilteredScheduleResponse.create()
+    return GetFilteredScheduleResponse.builder()
         .scheduleId(schedule.getScheduleId())
         .userId(schedule.getUserId())
         .username(schedule.getUsername())
